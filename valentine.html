@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Valentine's Day! ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 400px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .photo-frame {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 5px solid #ff4d6d;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            position: relative;
+            height: 60px;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .btn-yes {
+            background-color: #ff4d6d;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+            background-color: #e63950;
+        }
+
+        .btn-no {
+            background-color: #e0e0e0;
+            color: #555;
+            position: absolute;
+        }
+
+        #hidden-message {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tombol Musik */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+        }
+
+        .music-control.playing {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 77, 109, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: #ff4d6d;
+            opacity: 0.5;
+            animation: float 6s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Hati -->
+    <div id="hearts-container"></div>
+
+    <!-- Audio Player (Sembunyi) -->
+    <audio id="bgMusic" loop>
+        <!-- Ganti URL di bawah dengan link lagu favorit kalian -->
+        <source src="The 1975 - About You (Official) [tGv7CUutzqU].mp3" type="audio/mpeg">
+        Browser kamu tidak support audio.
+    </audio>
+
+    <!-- Tombol Musik -->
+    <button class="music-control" id="musicBtn" onclick="toggleMusic()">🎵</button>
+
+    <div class="container">
+        <!-- FOTO: Ganti link gambar di bawah dengan foto kalian -->
+        <div class="photo-frame">
+            <img src="WhatsApp Image 2026-03-09 at 09.30.19 (1).jpeg" alt="Foto Kita">
+        </div>
+
+        <h1>Happy Valentine's Day!</h1>
+        <p id="greeting">Hai, Sekar Ayu Naylanata Putri! 👋</p>
+        
+        <div id="question-box">
+            <p>Apakah kamu mau jadi Valentine aku tahun ini? 🥺</p>
+            <div class="btn-group">
+                <button class="btn-yes" onclick="terimaCinta()">Iya dong! ❤️</button>
+                <button class="btn-no" id="btnNo" onmouseover="pindahTombol()">Enggak</button>
+            </div>
+        </div>
+
+        <div id="hidden-message">
+            <h2>I LOVEEEE YOUUUU SAYANGGGGGG 🥰</h2>
+            <p>Makasihhh yaaaa udahhh mauuu nemeninnn akuuuuu, samaaa akuuu terusss sayanggg yaawwwww. <br>Happy Valentine's Day, Sayang! 💌</p>
+            <p style="font-size: 3rem;">💑</p>
+        </div>
+    </div>
+
+    <script>
+        // JAVASCRIPT: Bagian Logika Website
+
+        // --- MUSIK ---
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.innerHTML = '🎵';
+                musicBtn.classList.remove('playing');
+            } else {
+                bgMusic.play().catch(e => console.log("Perlu interaksi user dulu"));
+                musicBtn.innerHTML = '⏸️';
+                musicBtn.classList.add('playing');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- TOMBOL ENGAK KABUR ---
+        function pindahTombol() {
+            const btnNo = document.getElementById('btnNo');
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            const randomX = Math.random() * (containerRect.width - 100); 
+            const randomY = Math.random() * (containerRect.height - 50);
+            btnNo.style.position = 'absolute';
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+        }
+
+        // --- TOMBOL IYA ---
+        function terimaCinta() {
+            document.getElementById('question-box').style.display = 'none';
+            document.getElementById('hidden-message').style.display = 'block';
+            
+            // Putar musik otomatis saat tombol Iya diklik
+            if (!isPlaying) {
+                toggleMusic();
+            }
+
+            // Efek Confetti
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // --- HATI MENERBANG ---
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartCount = 20;
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('floating-heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+                heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+                container.appendChild(heart);
+            }
+        }
+
+        createHearts();
+    </script>
+</body>
+</html>
